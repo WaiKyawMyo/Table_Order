@@ -1,22 +1,39 @@
 import { NavLink, UNSAFE_decodeViaTurboStream } from 'react-router'
 import { useState } from 'react'
 import image from '../assets/Logo.svg'
+import { useHelpMutation } from '../Slice/API/tableApi'
+import { useSelector } from 'react-redux'
+import type { RootState } from '../store'
+import {  toast, } from 'react-toastify'
 
 function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const tableInfo = useSelector((state: RootState) => state.auth.table)
+  const [help]= useHelpMutation()
 
+  const handleHelp = async () => {
+  try {
+     // Optional: disable button temporarily
+    const res = await help({table_id: tableInfo.table_id})
+    
+    toast.success(res.data.message)
+    
+  } catch (error) {
+    toast.error(error.response?.data?.message || "Unable to send help request. Please try again.")
+  } 
+}
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen)
   }
 
   return (
     <div>
-
+   
     
 
     <nav className="bg-amber-50 dark:bg-amber-900 fixed w-full z-20 top-0 start-0 border-b border-amber-200 dark:border-amber-700">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-2">
-        <NavLink to="/home" className="flex items-center">
+        <NavLink to="/home/main" className="flex items-center">
           <img src={image} className="h-17 bg-amber-50 rounded-xl" alt="Restaurant Logo"/>
           <div className='ml-2 hidden sm:block'>
             <span className='self-center  md:text-2xl font-semibold whitespace-nowrap dark:text-white'>MuMu</span><br />
@@ -25,8 +42,8 @@ function Header() {
         </NavLink>
         
         <div className="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
-          <button type="button" className="text-white bg-amber-600 hover:bg-amber-700 focus:ring-4 focus:outline-none focus:ring-amber-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-amber-700 dark:hover:bg-amber-800 dark:focus:ring-amber-800">
-            Reserve Table
+          <button type="button" onClick={handleHelp} className="text-white bg-amber-600 hover:bg-amber-700 focus:ring-4 focus:outline-none focus:ring-amber-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-amber-700 dark:hover:bg-amber-800 dark:focus:ring-amber-800">
+            Need Help?
           </button>
           
           {/* Mobile menu toggle button */}
@@ -49,7 +66,7 @@ function Header() {
           <ul className="flex flex-col p-4 md:p-0 mt-4 font-medium border border-amber-200 rounded-lg bg-amber-100 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-amber-50 dark:bg-amber-800 md:dark:bg-amber-900 dark:border-amber-700">
             <li>
               <NavLink 
-                to="/home" 
+                to="/home/main" 
                 className={({ isActive }) => 
                   `block py-2 px-3 rounded-sm md:p-0 transition-colors ${
                     isActive 
@@ -77,7 +94,7 @@ function Header() {
                 Your Order
               </NavLink>
             </li>
-           
+              
             
           </ul>
         </div>

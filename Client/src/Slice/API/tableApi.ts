@@ -29,8 +29,22 @@ export const tableApiSlice = apiSlice.injectEndpoints({
                 method:"POST",
                 body:data
             })
+        }),
+        yourOrder:build.mutation({
+            query:(data)=>({
+                url:"showOrder",
+                method:"POST",
+                body:data
+            })
+        }),
+        help:build.mutation({
+            query:(data)=>({
+                url:"help",
+                method:"PUT",
+                body:data
+            })
         })
     })
 })
 
-export const {useGetAllMenuMutation,useMakeOrderMutation ,useCheckMutation,useCheckTableMutation } = tableApiSlice
+export const {useGetAllMenuMutation, useHelpMutation,useYourOrderMutation,useMakeOrderMutation ,useCheckMutation,useCheckTableMutation } = tableApiSlice

@@ -355,3 +355,17 @@ export const show_order = asyncHandler(async(req, res) => {
         data: result[0]
     });
 });
+
+export const help = asyncHandler(async(req,res)=>{
+    const {table_id}= req.body
+    if(!table_id){
+        throw new Error("Need Table Id")
+    }
+    const result = await Table.findOne({_id:table_id})
+    if(!result)
+    {
+        throw new Error("There is NO Table")
+    }
+    result.help = true
+    res.status(200).json({message:"A waiter will be with you shortly to assist you."})
+})

@@ -15,7 +15,7 @@ const router = createBrowserRouter([
     element:<Product><Home/></Product>,
     children:[
       {
-        path: '', // Empty string means it matches the parent path exactly (/home)
+        path: '/home/main', // Empty string means it matches the parent path exactly (/home)
         element:<MainHome/>
       },{
         path: '/home/yourOrder', 
