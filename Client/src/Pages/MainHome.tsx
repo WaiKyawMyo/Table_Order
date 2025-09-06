@@ -438,7 +438,7 @@ transition={Bounce}
       {/* Order Modal */}
       {showOrderModal && (
         <div className="fixed inset-0 bg-amber-900 bg-opacity-30 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[80vh] overflow-hidden shadow-2xl">
+          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-hidden shadow-2xl">
             {/* Modal Header */}
             <div className="flex items-center justify-between p-6 border-b border-gray-200 bg-gradient-to-r from-amber-50 to-orange-50">
               <h2 className="text-2xl font-bold text-amber-800">Your Order</h2>
@@ -451,7 +451,7 @@ transition={Bounce}
             </div>
 
             {/* Modal Body */}
-            <div className="p-6 overflow-y-auto max-h-[50vh] bg-white">
+            <div className="p-6 overflow-y-auto max-h-[40vh] bg-white">
               {orderItems.length === 0 ? (
                 <div className="text-center py-8">
                   <div className="text-4xl mb-4">🛒</div>

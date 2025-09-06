@@ -6,9 +6,7 @@ import { useEffect } from "react"
 function YourOrder() {
   const [yourOrder, { data, error, isLoading }] = useYourOrderMutation()
   const tableInfo = useSelector((state: RootState) => state.auth.table)
-  
-  
-  // Auto-fetch order when component mounts and table ID is available
+
   useEffect(() => {
     if (tableInfo?.table_id) {
       const fetchOrder = async () => {
@@ -18,21 +16,28 @@ function YourOrder() {
           console.error("Failed to fetch order:", err)
         }
       }
-      
       fetchOrder()
     }
+    // eslint-disable-next-line
   }, [tableInfo?.table_id, yourOrder])
 
   const handleRefreshOrder = async () => {
     if (tableInfo?.table_id) {
       try {
         await yourOrder({ table_id: tableInfo.table_id }).unwrap()
-        
       } catch (err) {
         console.error("Failed to refresh order:", err)
       }
     }
   }
+
+  // === Amount calculations (just for box display) ===
+  const total = data?.data?.total || 0
+  const discountPercent = data?.discount?.persent || 0
+  const discountName = data?.discount?.name || null
+  const discountAmount = total * (discountPercent / 100)
+  const taxAmount = total * 0.001 // 0.1%
+  const serviceCharge = total === 0 ? 0 : 2500
 
   return (
     <div className="min-h-screen bg-gray-50 p-4">
@@ -41,8 +46,6 @@ function YourOrder() {
         <div className="bg-white rounded-lg shadow-md p-6 mb-6">
           <div className="flex justify-between items-center">
             <h2 className="text-3xl font-bold text-gray-800">Your Order</h2>
-            
-            {/* Refresh Button */}
             {tableInfo?.table_id && (
               <button 
                 onClick={handleRefreshOrder} 
@@ -65,8 +68,6 @@ function YourOrder() {
               </button>
             )}
           </div>
-          
-          {/* Table Info Display */}
           {tableInfo && (
             <div className="bg-blue-50 p-4 rounded-lg mt-4">
               <p className="text-sm text-blue-600">
@@ -79,7 +80,7 @@ function YourOrder() {
           )}
         </div>
 
-        {/* Loading State - Initial Load */}
+        {/* Loading State */}
         {isLoading && !data && (
           <div className="bg-white rounded-lg shadow-md p-12 text-center">
             <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -102,7 +103,7 @@ function YourOrder() {
               </p>
             </div>
             {tableInfo?.table_id && (
-              <button 
+              <button  
                 onClick={handleRefreshOrder}
                 className="mt-2 text-sm text-red-600 hover:text-red-800 underline"
               >
@@ -112,9 +113,10 @@ function YourOrder() {
           </div>
         )}
 
-        {/* Display order data */}
+        {/* Main Content */}
         {data && data.success && (
           <div className="space-y-6">
+
             {/* Customer Info */}
             <div className="bg-white rounded-lg shadow-md p-6">
               <div className="flex items-center justify-between">
@@ -131,9 +133,6 @@ function YourOrder() {
                     <p className="text-gray-600">Table ID: {data.data.table_id}</p>
                   </div>
                 </div>
-                
-                {/* Total Amount Display */}
-                
               </div>
             </div>
 
@@ -185,7 +184,6 @@ function YourOrder() {
                         </svg>
                         Order Items
                       </h5>
-                      
                       <div className="space-y-3">
                         {data.data.orderItems
                           .filter(item => item.order_id === order._id)
@@ -213,7 +211,7 @@ function YourOrder() {
                                 </div>
                               </>
                             )}
-                            
+
                             {/* Set Item */}
                             {item.setDetails && item.setDetails.length > 0 && (
                               <>
@@ -244,7 +242,7 @@ function YourOrder() {
                 ))}
               </div>
             ) : (
-              /* No Orders Found */
+              // No Orders Found
               <div className="bg-white rounded-lg shadow-md p-12 text-center">
                 <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -256,23 +254,51 @@ function YourOrder() {
               </div>
             )}
 
-            {/* Summary Card at Bottom */}
+            {total > 0 && (
+              <div className="mt-8 mx-auto max-w-sm bg-white rounded-xl shadow p-6 border border-gray-100">
+                <h3 className="text-lg font-bold text-blue-600 mb-4 flex items-center gap-2">
+                  <svg className="h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405M19.595 15.595A8 8 0 109 9.05" />
+                  </svg>
+                  Tax &amp; Service Charge
+                </h3>
+                <div className="space-y-3 text-gray-800 text-base">
+                  <div className="flex justify-between">
+                    <span>Tax </span>
+                    <span>(0.1%)</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Service Charge</span>
+                    <span>{serviceCharge.toLocaleString()} MMK</span>
+                  </div>
+                  {discountPercent > 0 && (
+                    <div className="flex justify-between text-green-700 font-medium">
+                      <span>Discount ({discountName}{discountPercent ? `, ${discountPercent}%` : ''})</span>
+                      <span>-{discountAmount.toLocaleString()} MMK</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+            {/* Summary Card (blue, shows only the grand total) */}
             <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg shadow-md p-6 text-white">
               <div className="flex justify-between items-center">
                 <div>
                   <h3 className="text-lg font-semibold">Order Summary</h3>
-                  <p className="text-blue-100">
-                    Total Orders: {data.data.tableOrders?.length || 0}
-                  </p>
+                  <p className="text-blue-100">Total Orders: {data.data.tableOrders?.length || 0}</p>
                 </div>
                 <div className="text-right">
                   <p className="text-sm opacity-90">Grand Total</p>
                   <p className="text-3xl font-bold">
-                    {data.data.total} MMK
+                    {total.toLocaleString()} MMK
                   </p>
                 </div>
               </div>
             </div>
+            
+            {/* Minimal Tax & Service Charge Box */}
+            
+
           </div>
         )}
 

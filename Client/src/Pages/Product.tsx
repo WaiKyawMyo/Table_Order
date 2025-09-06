@@ -19,12 +19,13 @@ function Product({ children }: Props) {
             if (!tableInfo?.table_id) {
                 setCheck(false)
                 setIsLoading(false)
+                
                 return
             }
-
+            console.log("Table Info",tableInfo)
             try {
                 setIsLoading(true)
-                const result = await checkTable({ _id: tableInfo.table_id })
+                const result = await checkTable({ code: tableInfo.code })
                 console.log('Table check result:', result)
                 
                 if (result.data?.success) {

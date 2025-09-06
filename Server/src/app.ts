@@ -9,7 +9,7 @@ dotenv.config({
 })
 
 const app =express()
-const PORT = process.env.PORT || "4000"
+const PORT = process.env.PORT || "8000"
 
 app.use(express.json())
 app.use(cors({
@@ -20,7 +20,7 @@ app.use(cookieparser())
 app.use('/api',order)
 
 app.listen(PORT,()=>{
-    connectDB()
-    console.log("Server is running on "+ PORT)
     
+    console.log("Server is running on "+ PORT)
+    connectDB()
 })

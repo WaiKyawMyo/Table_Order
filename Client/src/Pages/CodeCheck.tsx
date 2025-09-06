@@ -25,41 +25,28 @@ const CodeCheck = () => {
   const [apiError, setApiError] = useState<string>('');
 
   const onSubmit: SubmitHandler<LoginForm> = async (data) => {
-    console.log('🎉 Table code verification:', data);
-    
     try {
-      setApiError('');
-      
-      const result = await checkCode({
-        code: Number(data.code)
-      }).unwrap();
-      
-      // Debug: Check the actual API response structure
-      console.log('✅ API Response:', result);
-    
-
-      // Handle successful verification - redirect to menu
-      dispatch(setTableInfo(result))
-      toast.success('Welcome! You can now browse our menu.',{
-        onClose:()=>{
-          navigate('/home')
-        }
-      });
-      
-      // TODO: Navigate to menu page
-      // Example: navigate('/menu') or window.location.href = '/menu'
-      
+        setApiError('');
+        
+        const result = await checkCode({
+            code: data.code  // Make sure this matches what backend expects
+        }).unwrap();
+        
+        dispatch(setTableInfo(result))
+        toast.success('Welcome! You can now browse our menu.', {
+            onClose: () => {
+                navigate('/home/main')
+            }
+        });
+        
     } catch (err: any) {
-      console.error('❌ Invalid table code:', err);
-      
-      const errorMessage = err?.data?.message || err?.message || 'Invalid table code. Please check with staff.';
-      setApiError(errorMessage);
-      toast.error(errorMessage);
-      
-      // Clear the form on error so customer can try again
-      reset();
+        console.error('❌ Invalid table code:', err);
+        const errorMessage = err?.data?.message || 'Invalid table code. Please check with staff.';
+        setApiError(errorMessage);
+        toast.error(errorMessage);
+        reset();
     }
-  };
+};
 
   return (
     <>

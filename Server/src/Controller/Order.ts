@@ -34,22 +34,22 @@ export const loginOrder = asyncHandler(async(req:CheckCodeRequest,res:Response)=
            });
        }else{
          generateToken(res,table?._id)
-        res.status(200).json({message:"Code is correct",table_id:table._id})
+        res.status(200).json({message:"Code is correct",table_id:table._id,code:table.code})
        }
        
        
       
 })
 export const checktable = asyncHandler(async(req:Request,res:Response)=>{
-    const {_id} = req.body 
-    if (!_id) {
+    const {code} = req.body 
+    if (!code) {
          res.status(400).json({ 
                success: false, 
                
            });
 
     }
-    const checktable = await Table.findById({_id})
+    const checktable = await Table.findOne({code})
     if(!checktable){
         res.status(400).json({ 
                success: false, 
@@ -349,15 +349,20 @@ export const show_order = asyncHandler(async(req, res) => {
             message: "No customer found for this table"
         });
     }
+    const discountdata = await Discount.find().limit(1)
+
+    console.log("Discount",discountdata)
 
     res.status(200).json({
         success: true,
-        data: result[0]
+        data: result[0],
+       
     });
 });
 
 export const help = asyncHandler(async(req,res)=>{
     const {table_id}= req.body
+    console.log(table_id)
     if(!table_id){
         throw new Error("Need Table Id")
     }
@@ -367,5 +372,6 @@ export const help = asyncHandler(async(req,res)=>{
         throw new Error("There is NO Table")
     }
     result.help = true
+    await result.save()
     res.status(200).json({message:"A waiter will be with you shortly to assist you."})
 })

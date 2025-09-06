@@ -4,8 +4,8 @@ export const tableApiSlice = apiSlice.injectEndpoints({
     endpoints: (build) => ({
         Check: build.mutation({
             query: (data) => ({
-                url: 'order',
-                method: "POST",
+                url:'/order',
+                method:"post",
                 body: data
             })
             
@@ -47,4 +47,4 @@ export const tableApiSlice = apiSlice.injectEndpoints({
     })
 })
 
-export const {useGetAllMenuMutation, useHelpMutation,useYourOrderMutation,useMakeOrderMutation ,useCheckMutation,useCheckTableMutation } = tableApiSlice
+export const {useGetAllMenuMutation, useHelpMutation,useYourOrderMutation,useMakeOrderMutation ,useCheckMutation ,useCheckTableMutation } = tableApiSlice

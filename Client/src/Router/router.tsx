@@ -4,6 +4,7 @@ import Home from "../Layout/Home";
 import Product from "../Pages/Product";
 import MainHome from "../Pages/MainHome";
 import YourOrder from "../Pages/YourOrder";
+import PageNotFound from "../Pages/pageNotFound";
 
 const router = createBrowserRouter([
    {
@@ -21,9 +22,16 @@ const router = createBrowserRouter([
         path: '/home/yourOrder', 
         element:<YourOrder/>
       },
+      {
+        path:"*",
+        element:<PageNotFound/>
+      }
      
     ]
-   }
+   },{
+        path:"*",
+        element:<CodeCheck/>
+      }
 ])
 
 export default router
